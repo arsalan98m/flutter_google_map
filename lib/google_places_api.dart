@@ -15,7 +15,7 @@ class GooglePlacesAPI extends StatefulWidget {
 class _GooglePlacesAPIState extends State<GooglePlacesAPI> {
   TextEditingController controller = TextEditingController();
   var uuid = Uuid();
-  String sessionToken = '123456';
+  String? sessionToken = '123456';
   List<dynamic> placesList = [];
 
   @override
