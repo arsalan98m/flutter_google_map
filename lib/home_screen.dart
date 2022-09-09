@@ -65,6 +65,25 @@ class _HomeScreenState extends State<HomeScreen> {
           initialCameraPosition: _kGooglePlex,
           mapType: MapType.normal,
           markers: Set<Marker>.of(_markers),
+          myLocationButtonEnabled: true,
+          mapToolbarEnabled: true,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          GoogleMapController controller = await _controller.future;
+          controller.animateCamera(
+            CameraUpdate.newCameraPosition(
+              const CameraPosition(
+                target: LatLng(33.9391, 67.7100),
+                zoom: 14,
+              ),
+            ),
+          );
+          // setState(() {});
+        },
+        child: const Icon(
+          Icons.location_disabled_outlined,
         ),
       ),
     );
