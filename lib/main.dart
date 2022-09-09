@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_google_maps/convert_lat_lang_address.dart';
-import 'package:flutter_google_maps/home_screen.dart';
+import 'package:flutter_google_maps/user_current_location.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ConvertLatLngAddress(),
+      home: UserCurrentLocation(),
     );
   }
 }
