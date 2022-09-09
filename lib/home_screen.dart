@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   loadData() async {
-    for (int i = 0; i <= latLng.length; i++) {
+    for (int i = 0; i < latLng.length; i++) {
       final Uint8List markerIcon = await getBytesFromAssets(images[i], 50);
 
       markers.add(
