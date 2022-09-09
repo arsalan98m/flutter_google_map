@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_google_maps/google_places_api.dart';
+import 'package:flutter_google_maps/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GooglePlacesAPI(),
+      home: HomeScreen(),
     );
   }
 }
