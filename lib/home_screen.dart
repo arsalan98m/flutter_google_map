@@ -23,65 +23,19 @@ class _HomeScreenState extends State<HomeScreen> {
     zoom: 14.4746,
   );
 
-  final Set<Marker> markers = {};
-
-  List<LatLng> points = [
-    LatLng(24.9141617, 67.082216),
-    LatLng(24.932152, 67.086014),
-  ];
+  String mapTheme = '';
 
   @override
   void initState() {
     super.initState();
-    loadData();
+    loadAssets();
   }
 
-  loadData() async {
-    for (int i = 0; i < points.length; i++) {
-      Uint8List? image = await loadNetworkImage(
-          'https://images.bitmoji.com/3d/avatar/201714142-99447061956_1-s5-v1.webp');
+  loadAssets() async {
+    final value = await DefaultAssetBundle.of(context)
+        .loadString('assets/silver_theme.json');
 
-      final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
-        image.buffer.asUint8List(),
-        targetWidth: 300,
-        targetHeight: 300,
-      );
-
-      final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
-
-      final ByteData? byteData =
-          await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-
-      final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
-
-      markers.add(
-        Marker(
-          markerId: MarkerId(i.toString()),
-          position: points[i],
-          infoWindow: const InfoWindow(
-            title: 'Really cool place',
-            snippet: '5 star rating',
-          ),
-          icon: BitmapDescriptor.fromBytes(resizedImageMarker),
-        ),
-      );
-    }
-
-    setState(() {});
-  }
-
-  Future<Uint8List> loadNetworkImage(String path) async {
-    final completer = Completer<ImageInfo>();
-    var image = NetworkImage(path);
-    image.resolve(ImageConfiguration()).addListener(
-        ImageStreamListener((info, _) => completer.complete(info)));
-
-    final imageInfo = await completer.future;
-
-    final byteData =
-        await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
-
-    return byteData!.buffer.asUint8List();
+    mapTheme = value;
   }
 
   @override
@@ -92,11 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             GoogleMap(
               onMapCreated: ((GoogleMapController controller) {
+                controller.setMapStyle(mapTheme);
                 _controller.complete(controller);
               }),
               initialCameraPosition: _kGooglePlex,
-              mapType: MapType.normal,
-              markers: markers,
             ),
           ],
         ),
