@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'dart:collection';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   final Set<Marker> markers = {};
-  Set<Polyline> polyline = {};
 
   List<LatLng> points = [
     LatLng(24.9141617, 67.082216),
@@ -32,8 +33,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
 
+  loadData() async {
     for (int i = 0; i < points.length; i++) {
+      Uint8List? image = await loadNetworkImage(
+          'https://images.bitmoji.com/3d/avatar/201714142-99447061956_1-s5-v1.webp');
+
+      final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
+        image.buffer.asUint8List(),
+        targetWidth: 300,
+        targetHeight: 300,
+      );
+
+      final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
+
+      final ByteData? byteData =
+          await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+
+      final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+
       markers.add(
         Marker(
           markerId: MarkerId(i.toString()),
@@ -42,21 +62,26 @@ class _HomeScreenState extends State<HomeScreen> {
             title: 'Really cool place',
             snippet: '5 star rating',
           ),
-          icon: BitmapDescriptor.defaultMarker,
+          icon: BitmapDescriptor.fromBytes(resizedImageMarker),
         ),
       );
     }
 
-    polyline.add(
-      Polyline(
-        polylineId: const PolylineId("1"),
-        points: points,
-        color: Colors.green,
-        width: 4,
-      ),
-    );
-
     setState(() {});
+  }
+
+  Future<Uint8List> loadNetworkImage(String path) async {
+    final completer = Completer<ImageInfo>();
+    var image = NetworkImage(path);
+    image.resolve(ImageConfiguration()).addListener(
+        ImageStreamListener((info, _) => completer.complete(info)));
+
+    final imageInfo = await completer.future;
+
+    final byteData =
+        await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
+
+    return byteData!.buffer.asUint8List();
   }
 
   @override
@@ -72,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
               initialCameraPosition: _kGooglePlex,
               mapType: MapType.normal,
               markers: markers,
-              polylines: polyline,
             ),
           ],
         ),
