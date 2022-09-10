@@ -22,26 +22,41 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   final Set<Marker> markers = {};
-  Set<Polygon> polygon = HashSet<Polygon>();
+  Set<Polyline> polyline = {};
 
   List<LatLng> points = [
     LatLng(24.9141617, 67.082216),
     LatLng(24.932152, 67.086014),
-    LatLng(24.9368, 67.0760),
-    LatLng(24.9141617, 67.082216),
   ];
 
   @override
   void initState() {
     super.initState();
 
-    polygon.add(Polygon(
-      polygonId: PolygonId('1'),
-      points: points,
-      fillColor: Colors.red.withOpacity(0.3),
-      geodesic: true,
-      strokeWidth: 4,
-    ));
+    for (int i = 0; i < points.length; i++) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(i.toString()),
+          position: points[i],
+          infoWindow: const InfoWindow(
+            title: 'Really cool place',
+            snippet: '5 star rating',
+          ),
+          icon: BitmapDescriptor.defaultMarker,
+        ),
+      );
+    }
+
+    polyline.add(
+      Polyline(
+        polylineId: const PolylineId("1"),
+        points: points,
+        color: Colors.green,
+        width: 4,
+      ),
+    );
+
+    setState(() {});
   }
 
   @override
@@ -56,7 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
               initialCameraPosition: _kGooglePlex,
               mapType: MapType.normal,
-              polygons: polygon,
+              markers: markers,
+              polylines: polyline,
             ),
           ],
         ),
